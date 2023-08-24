@@ -1,0 +1,38 @@
+const employees = require("../models/emsModel")
+
+
+// all logics
+
+// register logic
+
+employeeRegister = async (req, res) => {
+
+    const file = req.file.filename
+
+    const { fname, lname, email, mobile, gender, status, location } = req.body
+
+    if(!fname || !lname || !email || !mobile || !gender || !status || !location){
+        res.status(404).json("all inputs are required")
+    }
+
+    // try {
+        const preEmployee = await employees.findOne({ email })
+
+        if (preEmployee) {
+            res.staus(403).json("employee already present")
+        }
+        else {
+            // create object for new employee
+            const newEmployee = new employees({ fname, lname, email, mobile, gender, status, profile: file, location })
+            await newEmployee.save()
+
+            res.status(200).json(newEmployee)
+
+        }
+    // }
+    // catch {
+    //     res.status(400).json("logic error")
+    // }
+}
+
+module.exports={employeeRegister}
